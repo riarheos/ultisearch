@@ -1,0 +1,25 @@
+port:  8080
+debug: false
+
+engines:
+  fallback: google
+  russian:  yandex
+  japanese: jisho
+  urls:
+    google:   https://www.google.ru/search?q=
+    yandex:   https://yandex.ru/yandsearch?text=
+    jisho:    http://jisho.org/search/
+    staff:    https://staff.yandex-team.ru/
+    startrek: https://st.yandex-team.ru/
+
+keywords:
+  g:  google
+  j:  jisho
+  s:  staff
+  st: startrek
+  c++:
+    engine: google
+    prepend: site:cppreference.com
+  mysql:
+    engine: google
+    prepend: site:dev.mysql.com
