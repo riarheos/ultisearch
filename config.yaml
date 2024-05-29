@@ -6,17 +6,21 @@ engines:
   russian:  yandex
   japanese: jisho
   urls:
-    google:   https://www.google.ru/search?q=
-    yandex:   https://yandex.ru/yandsearch?text=
-    jisho:    http://jisho.org/search/
-    staff:    https://staff.yandex-team.ru/
-    startrek: https://st.yandex-team.ru/
+    google:     https://www.google.ru/search?q=
+    yandex:     https://yandex.ru/yandsearch?text=
+    jisho:      http://jisho.org/search/
+    staff:      https://staff.yandex-team.ru/
+    startrek:   https://st.yandex-team.ru/
+    gramota:    https://gramota.ru/poisk?query=
+    multitran:  https://www.multitran.com/m.exe?l1=1&l2=2&s=
 
 keywords:
   g:  google
   j:  jisho
   s:  staff
   st: startrek
+  gr: gramota
+  mt: multitran
   c++:
     engine: google
     prepend: site:cppreference.com
