@@ -5,6 +5,7 @@ import (
 	yaml "gopkg.in/yaml.v3"
 	"io"
 	"os"
+	"unicode/utf8"
 )
 
 type Keyword struct {
@@ -14,18 +15,21 @@ type Keyword struct {
 
 type KeywordEither struct{ mo.Either[string, *Keyword] }
 
-type EngineConfig struct {
-	Fallback string            `yaml:"fallback"`
-	Russian  string            `yaml:"russian"`
-	Japanese string            `yaml:"japanese"`
-	URLS     map[string]string `yaml:"urls"`
+type RuneConfig struct {
+	From     string `yaml:"from"`
+	To       string `yaml:"to"`
+	Engine   string `yaml:"engine"`
+	FromRune rune
+	ToRune   rune
 }
 
 type Config struct {
 	Port  int  `yaml:"port"`
 	Debug bool `yaml:"debug"`
 
-	Engines  EngineConfig              `yaml:"engines"`
+	Engines  map[string]string         `yaml:"engines"`
+	Default  string                    `yaml:"default"`
+	Runes    []*RuneConfig             `yaml:"runes"`
 	Keywords map[string]*KeywordEither `yaml:"keywords"`
 }
 
@@ -51,7 +55,9 @@ func ReadConfig(fileName string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	bytes, err := io.ReadAll(file)
 	if err != nil {
@@ -62,6 +68,11 @@ func ReadConfig(fileName string) (*Config, error) {
 	err = yaml.Unmarshal(bytes, &config)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, rc := range config.Runes {
+		rc.FromRune, _ = utf8.DecodeRuneInString(rc.From)
+		rc.ToRune, _ = utf8.DecodeRuneInString(rc.To)
 	}
 
 	return &config, nil

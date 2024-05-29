@@ -1,19 +1,29 @@
 port:  8080
 debug: false
 
+# The engine URLs
 engines:
-  fallback: google
-  russian:  yandex
-  japanese: jisho
-  urls:
-    google:     https://www.google.ru/search?q=
-    yandex:     https://yandex.ru/yandsearch?text=
-    jisho:      http://jisho.org/search/
-    staff:      https://staff.yandex-team.ru/
-    startrek:   https://st.yandex-team.ru/
-    gramota:    https://gramota.ru/poisk?query=
-    multitran:  https://www.multitran.com/m.exe?l1=1&l2=2&s=
+  google:     https://www.google.ru/search?q=
+  yandex:     https://yandex.ru/yandsearch?text=
+  jisho:      http://jisho.org/search/
+  staff:      https://staff.yandex-team.ru/
+  startrek:   https://st.yandex-team.ru/
+  gramota:    https://gramota.ru/poisk?query=
+  multitran:  https://www.multitran.com/m.exe?l1=1&l2=2&s=
 
+# The default engine name, will be selected if none of the rules below match
+default: google
+
+# Selected if the query contains letters from the diapasone
+runes:
+  - from:   а
+    to:     я
+    engine: yandex
+  - from:   "\u3040"
+    to:     "\u9faf"
+    engine: jisho
+
+# Selected if the query starts with the keyword
 keywords:
   g:  google
   j:  jisho

@@ -41,18 +41,15 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path = strings.Replace(path, "/search/", "", 1)
 
 	// defaults
-	engine := s.config.Engines.Fallback
+	engine := s.config.Default
 	prepend := ""
 
 	for _, r := range path {
-		if (r >= 'а' && r <= 'я') || (r >= 'А' && r <= 'Я') {
-			engine = s.config.Engines.Russian
-			continue
-		}
-
-		if r >= 0x3040 && r <= 0x4db0 {
-			engine = s.config.Engines.Japanese
-			continue
+		for _, conf := range s.config.Runes {
+			if r >= conf.FromRune && r <= conf.ToRune {
+				engine = conf.Engine
+				break
+			}
 		}
 	}
 
@@ -75,7 +72,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	s.log.Debugw("Request", "path", path, "engine", engine, "prepend", prepend)
 
-	newPath, ok := s.config.Engines.URLS[engine]
+	newPath, ok := s.config.Engines[engine]
 	if !ok {
 		s.log.Errorf("Engine %s not found", engine)
 		return
@@ -88,7 +85,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if s.config.Debug {
-		w.Write([]byte(newPath))
+		_, _ = w.Write([]byte(newPath))
 	} else {
 		w.Header().Add("Location", newPath)
 		w.WriteHeader(http.StatusFound)
