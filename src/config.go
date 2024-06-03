@@ -8,9 +8,15 @@ import (
 	"unicode/utf8"
 )
 
+type Replacement struct {
+	From string `yaml:"from"`
+	To   string `yaml:"to"`
+}
+
 type Keyword struct {
-	Engine  string `yaml:"engine"`
-	Prepend string `yaml:"prepend"`
+	Engine  string        `yaml:"engine"`
+	Prepend string        `yaml:"prepend"`
+	Replace []Replacement `yaml:"replace"`
 }
 
 type KeywordEither struct{ mo.Either[string, *Keyword] }

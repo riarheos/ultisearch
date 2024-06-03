@@ -43,6 +43,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// defaults
 	engine := s.config.Default
 	prepend := ""
+	var replacements []Replacement = nil
 
 	for _, r := range path {
 		for _, conf := range s.config.Runes {
@@ -61,10 +62,13 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if ok {
 			if data.IsLeft() {
 				engine = data.MustLeft()
+				prepend = ""
+				replacements = nil
 			} else {
 				r := data.MustRight()
 				engine = r.Engine
 				prepend = r.Prepend
+				replacements = r.Replace
 			}
 			path = path[idx+1:]
 		}
@@ -76,6 +80,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		s.log.Errorf("Engine %s not found", engine)
 		return
+	}
+
+	if replacements != nil {
+		for _, repl := range replacements {
+			path = strings.Replace(path, repl.From, repl.To, -1)
+		}
 	}
 
 	if prepend != "" {

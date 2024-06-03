@@ -27,10 +27,14 @@ runes:
 keywords:
   g:  google
   j:  jisho
-  s:  staff
   st: startrek
   gr: gramota
   mt: multitran
+  s:
+    engine: staff
+    replace:
+      - from: https://t.me/
+        to: ""
   c++:
     engine: google
     prepend: site:cppreference.com
