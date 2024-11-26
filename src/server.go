@@ -88,6 +88,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	path = url.PathEscape(path)
+
 	if prepend != "" {
 		newPath += prepend + " " + path
 	} else {
