@@ -38,7 +38,30 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.log.Errorf("failed to unescape path: %v", err)
 		return
 	}
-	path = strings.Replace(path, "/search/", "", 1)
+	path = strings.TrimPrefix(path, "/")
+
+	if strings.HasPrefix(path, "opensearch") {
+		if path == "opensearch.xml" {
+			w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
+				<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+					<ShortName>Универсальный поиск</ShortName>
+					<Description>Универсальный поиск ищет правильнее других</Description>
+					<Url rel="self" type="application/opensearchdescription+xml" template="http://unisearch:8080/opensearch.xml"/>
+					<Url type="application/x-suggestions+json" method="GET" template="https://suggest.yandex.com/suggest-ff.cgi?part={searchTerms}"/>
+					<Url type="text/html" template="http://unisearch:8080/{searchTerms}"/>
+				</OpenSearchDescription>
+				`))
+		} else {
+			w.Write([]byte(`<!DOCTYPE html>
+				<html lang="en">
+				<head>
+					<link rel="search" type="application/opensearchdescription+xml" title="Ultisearch" href="opensearch.xml"/>
+				</head>
+				<body>Please add the engine with ^click on the URL</body>
+				</html>`))
+		}
+		return
+	}
 
 	// defaults
 	engine := s.config.Default
